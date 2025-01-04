@@ -1,5 +1,11 @@
 package quokka
 
+import (
+	"fmt"
+
+	"github.com/joho/godotenv"
+)
+
 const version = "1.0.0"
 
 type Quokka struct {
@@ -20,6 +26,16 @@ func (quokka *Quokka) New(rootPath string) error {
 		return err
 	}
 
+	err = quokka.checkDotenvFile(rootPath)
+	if err != nil {
+		return err
+	}
+
+	err = godotenv.Load(rootPath)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -30,6 +46,14 @@ func (quokka *Quokka) Init(path initPaths) error {
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (quokka *Quokka) checkDotenvFile(path string) error {
+	err := quokka.createFileIfNotExists(fmt.Sprintf("%s/.env", path))
+	if err != nil {
+		return err
 	}
 	return nil
 }
