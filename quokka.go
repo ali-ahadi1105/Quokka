@@ -3,9 +3,12 @@ package quokka
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
+	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -18,6 +21,13 @@ type Quokka struct {
 	ErrorLog *log.Logger
 	InfoLog  *log.Logger
 	RootPath string
+	Routes   *chi.Mux
+	config   config
+}
+
+type config struct {
+	port     string
+	renderer string
 }
 
 func (quokka *Quokka) New(rootPath string) error {
@@ -45,12 +55,21 @@ func (quokka *Quokka) New(rootPath string) error {
 		return err
 	}
 
-	// create logs
+	// create logs and other things
 	infoLog, errorLog := quokka.startLoggers()
 	quokka.InfoLog = infoLog
 	quokka.ErrorLog = errorLog
 	quokka.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	quokka.Version = version
+	quokka.RootPath = rootPath
+	quokka.Routes = quokka.routes().(*chi.Mux)
+
+	// create configuration files
+	quokka.config = config{
+		port:     os.Getenv("PORT"),
+		renderer: os.Getenv("RENDERER"),
+	}
+
 	return nil
 }
 
@@ -63,6 +82,22 @@ func (quokka *Quokka) Init(path initPaths) error {
 		}
 	}
 	return nil
+}
+
+// start server
+func (quo *Quokka) ListenAndServe() {
+	server := http.Server{
+		Addr:         fmt.Sprintf(":%s", os.Getenv("PORT")),
+		Handler:      quo.routes(),
+		ErrorLog:     quo.ErrorLog,
+		IdleTimeout:  30 * time.Second,
+		WriteTimeout: 600 * time.Second,
+		ReadTimeout:  30 * time.Second,
+	}
+
+	quo.InfoLog.Printf("Server is running on port %s", os.Getenv("PORT"))
+	err := server.ListenAndServe()
+	quo.ErrorLog.Fatal(err)
 }
 
 func (quokka *Quokka) checkDotenvFile(path string) error {
