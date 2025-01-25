@@ -92,7 +92,7 @@ func (quokka *Quokka) Init(path initPaths) error {
 func (quo *Quokka) ListenAndServe() {
 	server := http.Server{
 		Addr:         fmt.Sprintf(":%s", os.Getenv("PORT")),
-		Handler:      quo.routes(),
+		Handler:      quo.Routes,
 		ErrorLog:     quo.ErrorLog,
 		IdleTimeout:  30 * time.Second,
 		WriteTimeout: 600 * time.Second,
