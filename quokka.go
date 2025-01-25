@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ali-ahadi1105/Quokka/render"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 )
@@ -23,6 +24,7 @@ type Quokka struct {
 	RootPath string
 	Routes   *chi.Mux
 	config   config
+	Render   *render.Renderer
 }
 
 type config struct {
@@ -70,6 +72,8 @@ func (quokka *Quokka) New(rootPath string) error {
 		renderer: os.Getenv("RENDERER"),
 	}
 
+	quokka.Render = quokka.createRenderer(quokka)
+
 	return nil
 }
 
@@ -116,4 +120,13 @@ func (quokka *Quokka) startLoggers() (*log.Logger, *log.Logger) {
 	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	return infoLog, errorLog
+}
+
+func (q *Quokka) createRenderer(quo *Quokka) *render.Renderer {
+	myRenderer := render.Renderer{
+		Renderer: quo.config.renderer,
+		Port:     quo.config.port,
+		RootPath: quo.RootPath,
+	}
+	return &myRenderer
 }
