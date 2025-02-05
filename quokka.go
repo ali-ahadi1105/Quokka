@@ -72,6 +72,7 @@ func (quokka *Quokka) New(rootPath string) error {
 		renderer: os.Getenv("RENDERER"),
 	}
 
+	// Initialize renderer for application
 	quokka.Renderer = quokka.createRenderer(quokka)
 
 	return nil
@@ -122,6 +123,7 @@ func (quokka *Quokka) startLoggers() (*log.Logger, *log.Logger) {
 	return infoLog, errorLog
 }
 
+// prepare renderer for application
 func (quokka *Quokka) createRenderer(quo *Quokka) *render.Render {
 	myRenderer := render.Render{
 		Renderer: quo.config.renderer,
