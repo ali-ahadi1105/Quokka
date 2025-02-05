@@ -24,7 +24,7 @@ type Quokka struct {
 	RootPath string
 	Routes   *chi.Mux
 	config   config
-	Render   *render.Renderer
+	Renderer *render.Render
 }
 
 type config struct {
@@ -72,7 +72,7 @@ func (quokka *Quokka) New(rootPath string) error {
 		renderer: os.Getenv("RENDERER"),
 	}
 
-	quokka.Render = quokka.createRenderer(quokka)
+	quokka.Renderer = quokka.createRenderer(quokka)
 
 	return nil
 }
@@ -122,8 +122,8 @@ func (quokka *Quokka) startLoggers() (*log.Logger, *log.Logger) {
 	return infoLog, errorLog
 }
 
-func (q *Quokka) createRenderer(quo *Quokka) *render.Renderer {
-	myRenderer := render.Renderer{
+func (quokka *Quokka) createRenderer(quo *Quokka) *render.Render {
+	myRenderer := render.Render{
 		Renderer: quo.config.renderer,
 		Port:     quo.config.port,
 		RootPath: quo.RootPath,
