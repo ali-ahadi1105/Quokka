@@ -37,7 +37,7 @@ func (q *Quokka) New(rootPath string) error {
 	}
 
 	// load .env file
-	err = godotenv.Load(rootPath + "./env")
+	err = godotenv.Load(rootPath + "/.env")
 	if err != nil {
 		return err
 	}
