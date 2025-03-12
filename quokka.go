@@ -18,6 +18,12 @@ type Quokka struct {
 	InfoLog  *log.Logger
 	ErrorLog *log.Logger
 	RootPath string
+	config   config
+}
+
+type config struct {
+	port     string
+	renderer string
 }
 
 func (q *Quokka) New(rootPath string) error {
@@ -48,6 +54,12 @@ func (q *Quokka) New(rootPath string) error {
 	q.ErrorLog = errorLog
 	q.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	q.Version = version
+	q.RootPath = rootPath
+
+	q.config = config{
+		port:     os.Getenv("PORT"),
+		renderer: os.Getenv("RENDERER"),
+	}
 
 	return nil
 }
