@@ -54,7 +54,7 @@ func (q *Quokka) New(rootPath string) error {
 		return err
 	}
 
-	// create loggers
+	// create loggers and another configuration of quokka framework
 	infoLog, errorLog := q.startLoggers()
 	q.InfoLog = infoLog
 	q.ErrorLog = errorLog
@@ -106,7 +106,7 @@ func (q *Quokka) startLoggers() (*log.Logger, *log.Logger) {
 func (q *Quokka) ListenAndServe() {
 	serv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", os.Getenv("PORT")),
-		Handler:      q.routes(),
+		Handler:      q.Routes,
 		IdleTimeout:  30 * time.Second,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 600 * time.Second,
@@ -120,7 +120,7 @@ func (q *Quokka) ListenAndServe() {
 func (q *Quokka) createRenderer(quo *Quokka) *render.Render {
 	myRenderer := render.Render{
 		RootPath: quo.RootPath,
-		Port: quo.config.port,
+		Port:     quo.config.port,
 		Renderer: quo.config.renderer,
 	}
 	return &myRenderer
