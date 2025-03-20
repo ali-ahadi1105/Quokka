@@ -68,7 +68,7 @@ func (q *Quokka) New(rootPath string) error {
 		renderer: os.Getenv("RENDERER"),
 	}
 
-	q.Render = q.createRenderer(q)
+	q.createRenderer()
 
 	return nil
 }
@@ -117,11 +117,11 @@ func (q *Quokka) ListenAndServe() {
 }
 
 // create render engine
-func (q *Quokka) createRenderer(quo *Quokka) *render.Render {
+func (q *Quokka) createRenderer() {
 	myRenderer := render.Render{
-		RootPath: quo.RootPath,
-		Port:     quo.config.port,
-		Renderer: quo.config.renderer,
+		RootPath: q.RootPath,
+		Port:     q.config.port,
+		Renderer: q.config.renderer,
 	}
-	return &myRenderer
+	q.Render = &myRenderer
 }
